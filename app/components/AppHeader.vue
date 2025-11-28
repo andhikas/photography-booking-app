@@ -1,26 +1,36 @@
 <script setup lang="ts">
 import type { NavigationMenuItem } from '@nuxt/ui'
+const { user, logout } = useAuth();
 
-defineProps<{
-  links: NavigationMenuItem[]
-}>()
+const links: NavigationMenuItem[] = [{
+  label: 'Discover',
+  to: '/discover'
+}]
+
+async function handleLogout() {
+  await logout();
+  await navigateTo('/');
+}
 </script>
 
 <template>
-  <div class="fixed top-2 sm:top-4 mx-auto left-1/2 transform -translate-x-1/2 z-10">
-    <UNavigationMenu
-      :items="links"
-      variant="link"
-      color="neutral"
-      class="bg-muted/80 backdrop-blur-sm rounded-full px-2 sm:px-4 border border-muted/50 shadow-lg shadow-neutral-950/5"
-      :ui="{
-        link: 'px-2 py-1',
-        linkLeadingIcon: 'hidden'
-      }"
-    >
-      <template #list-trailing>
-        <ColorModeButton />
+  <UHeader :links="links">
+    <template #left>
+      <NuxtLink to="/" class="text-xl font-bold text-highlighted">
+        LensConnect
+      </NuxtLink>
+    </template>
+
+    <template #right>
+      <template v-if="user">
+        <UButton label="Dashboard" color="neutral" to="/dashboard" />
+        <UButton label="Logout" @click="handleLogout" />
       </template>
-    </UNavigationMenu>
-  </div>
+      <template v-else>
+        <UButton label="Login" color="neutral" to="/login" />
+        <UButton label="Sign Up" to="/register" />
+      </template>
+      <ColorModeButton />
+    </template>
+  </UHeader>
 </template>
